@@ -1,6 +1,10 @@
-use anyhow;
-use std::io::process;
-use std::io::write;
+use anyhow::Context;
+use anyhow::Result;
+use std::io::Write;
+use std::process::Child;
+use std::process::ChildStdout;
+use std::process::Command;
+use std::process::Stdio;
 
 pub struct SshConnection {
     child: Child,
@@ -15,7 +19,7 @@ impl SshConnection {
             .arg("ConnectTimeout=5")
             .arg(target)
             .arg("sh -s")
-            .stdin(Studio::piped())
+            .stdin(Stdio::piped())
             //for acces to the connection's in and out
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
@@ -30,11 +34,12 @@ impl SshConnection {
             .child
             .stdin
             .take()
-            .context("Couldn't access SSH input");
+            .context("Couldn't access SSH input")?;
+
         let script = include_str!("../scripts/collect.sh");
         //using the previously made script, this macro puts that
         // in the binary when compiling
-        stdin.write_all(script.as_bytes());
+        stdin.write_all(script.as_bytes())?;
 
         //script is sent but stdout is kept open
 
@@ -44,7 +49,7 @@ impl SshConnection {
             .child
             .stdout
             .take()
-            .context("Couldn't access SSH stdout");
+            .context("Couldn't access SSH stdout")?;
         Ok((connection, stdout))
     }
 }
