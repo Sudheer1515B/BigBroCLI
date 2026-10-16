@@ -2,18 +2,18 @@
 
 
 while :; do
-    mem_total = 0
-    mem_available = 0
-    swap_total = 0
-    swap_free = 0
+    mem_total=0
+    mem_available=0
+    swap_total=0
+    swap_free=0
 
     #get the info above
     while read -r key value unit; do
         case "$key" in
-            MemTotal:) mem_total = $value ;;
-            MemAvailable:) mem_available = $value;;
-            SwapTotal:) swap_total = $value;;
-            SwapFree:) swap_free = $value;;
+            MemTotal:) mem_total=$value ;;
+            MemAvailable:) mem_available=$value;;
+            SwapTotal:) swap_total=$value;;
+            SwapFree:) swap_free=$value;;
         esac
     done < /proc/meminfo
 
@@ -29,10 +29,10 @@ while :; do
     while read -r core user nice system idle iowait irq softirq steal rest; do
         case "$core" in
             cpu|cpu[0-9]*)
-                total = $((user + nice + system + idle + iowait + irq + softirq +steal))
-                idle_total = $((idle + iowait))
+                total=$((user + nice + system + idle + iowait + irq + softirq +steal))
+                idle_total=$((idle + iowait))
 
-                printf '%s:%s:%s' \
+                printf ' %s:%s:%s' \
                   "$core" "$total" "$idle_total"
                 ;;
         esac
