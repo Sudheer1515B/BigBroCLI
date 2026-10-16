@@ -18,8 +18,9 @@ fn main() -> anyhow::Result<()> {
 
     let reader = BufReader::new(stdout);
 
-    for line in reader.lines() {
+    for line in reader.lines().take(5) {
         println!("{}", line?);
     }
+    //we gon keep tis runnin for 5 just for keeping testing simple n small
     Ok(())
 }
